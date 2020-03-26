@@ -15,48 +15,56 @@ class App extends React.Component {
       username: null,
       color: colors[ Math.floor( Math.random() * colors.length )],
       uid: null,
-      messages: []
+      messages: [],
+      historyLoaded: false
     }
 
-  this.socket = io('localhost:8080');
+    this.socket = io('localhost:8080');
 
-  this.socket.on('RECEIVE_MESSAGE', function(data){
-      addMessage(data);
-  });
+    this.socket.on('RECEIVE_MESSAGE', function(data, type){
+        addMessage(data, type);
+    });
 
-  const addMessage = data => {
-    let result = data;
-    if(result.type == 'message'){
-    this.setState(state => {
-      const messages = [...state.messages, {
-        username: result.username,
-        message: result.message,
-        color: result.color,
-        timestamp: result.timestamp,
-      }]
-      return{
-        messages,
+    const addMessage = (data, type) => {
+      let result = data;
+      if (type == 'message') {
+        this.setState(state => {
+          const messages = [...state.messages, {
+            username: result.username,
+            message: result.message,
+            color: result.color,
+            timestamp: result.timestamp,
+          }]
+          return {
+            messages,
+          }
+        })
       }
-    })
-  }
-    if(result.type == 'history'){
-        result.messageArray.map(message =>
-          this.setState( state => {
-            const messages = [{
-              username: message.username,
-              color: message.color,
-              message: message.message,
-              timestamp: message.timestamp,
-            }, ...state.messages]
+      if (type == 'history') {
+        if (this.state.historyLoaded === false) {
+          result.map(msg => {
+            this.setState(state => {
+              const messages = [...state.messages, {
+                username: msg.username,
+                message: msg.message,
+                color: msg.color,
+                timestamp: msg.timestamp,
+              }]
+              return {
+                messages,
+              }
+            })
           })
-      )}
+          this.setState({historyLoaded:true});
+        }
+      }
     }
 
-    this.sendMessage = (message) => {
+      this.sendMessage = (message) => {
         if(this.state.username === null){
           this.setState({username: message});
         }
-        else{
+        else {
           this.socket.emit('SEND_MESSAGE', {
               username: this.state.username,
               color: this.state.color,
@@ -64,32 +72,31 @@ class App extends React.Component {
               timestamp: Date.now(),
               type: 'message',
           }, function(answer){});
+        }
       }
 
-    }
-
-    this.handleKeyDown = (e) => {
-      if(e.keyCode === 13){
-        this.sendMessage(e.target.value);
-        $('#msg_input').val('');
+      this.handleKeyDown = (e) => {
+        if(e.keyCode === 13){
+          this.sendMessage(e.target.value);
+          $('#msg_input').val('');
+        }
       }
-    }
 }
-  render (){
+
+render (){
     return(
       <React.Fragment>
-    <div class="content">
-      {this.state.messages.map(message =>
-        <p key="message"><font color={message.color}>{message.username}</font>
-      : { message.message }</p>
-    )}
-</div>
-      <input id="msg_input" type="text" onKeyDown={this.handleKeyDown} placeholder="Enter your username..." />
-    <Button onClick={() => this.sendMessage(document.getElementById('msg_input').value)}/>
-</React.Fragment>
+        <div class="content">
+            {this.state.messages.map(message =>
+                <p key="message"><font color={message.color}>{message.username}</font>
+              : { message.message }</p>
+            )}
+        </div>
+        <input id="msg_input" type="text" onKeyDown={this.handleKeyDown} placeholder="Enter your username..." />
+        <Button onClick={() => this.sendMessage(document.getElementById('msg_input').value)}/>
+      </React.Fragment>
+)}
 
-  )}
-
-  }
+}
 
 export default App;
