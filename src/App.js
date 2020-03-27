@@ -23,7 +23,7 @@ class App extends React.Component {
 
     this.socket.on('RECEIVE_MESSAGE', function(data, type){
         addMessage(data, type);
-    });
+    }); 
 
     const addMessage = (data, type) => {
       let result = data;
@@ -58,29 +58,35 @@ class App extends React.Component {
           this.setState({historyLoaded:true});
         }
       }
+      // Comprobar si el usuario se desplaza hasta la parte abajo de la página y desplazarse para revelar el siguiente mensaje si está
+      var root = document.getElementById('root');
+      var scrollBottom = root.scrollHeight - root.clientHeight
+      if ((root.clientHeight + root.scrollTop) >= root.scrollHeight - 100 || type === 'history') {
+        root.scrollTop = scrollBottom;
+      }
     }
 
-      this.sendMessage = (message) => {
-        if(this.state.username === null){
-          this.setState({username: message});
-        }
-        else {
-          this.socket.emit('SEND_MESSAGE', {
-              username: this.state.username,
-              color: this.state.color,
-              message: message,
-              timestamp: Date.now(),
-              type: 'message',
-          }, function(answer){});
-        }
+    this.sendMessage = (message) => {
+      if(this.state.username === null){
+        this.setState({username: message});
       }
+      else {
+        this.socket.emit('SEND_MESSAGE', {
+            username: this.state.username,
+            color: this.state.color,
+            message: message,
+            timestamp: Date.now(),
+            type: 'message',
+        }, function(answer){});
+      }
+    }
 
-      this.handleKeyDown = (e) => {
-        if(e.keyCode === 13){
-          this.sendMessage(e.target.value);
-          $('#msg_input').val('');
-        }
+    this.handleKeyDown = (e) => {
+      if(e.keyCode === 13){
+        this.sendMessage(e.target.value);
+        $('#msg_input').val('');
       }
+    }
 }
 
 render (){
