@@ -4,9 +4,22 @@ import $ from "jquery";
 import logo from './logo.svg';
 import './App.css';
 const colors = [ 'red', 'green', 'blue', 'magenta', 'purple', 'plum', 'orange' ];
+const reactStringReplace = require('react-string-replace');
 
 function Button(props){
     return(<label id="enviar" onClick={props.onClick}>⏩</label>);
+}
+function ReplaceUrls(props) {
+      let rawMessage = props.message;
+      let replacedMessage = reactStringReplace(rawMessage, /(https?:\/\/[^\s]*\.(?:jpg|jpeg|gif|png|svg))/g, (match, i) => (
+        <img src={match}/>));
+      replacedMessage = reactStringReplace(replacedMessage, /http(?:s?):\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-\_]*)/g, (match, i) => (
+        <iframe width="260" height="161" src={"https://www.youtube.com/embed/" + match + "?loop=1&modestbranding=0&playlist="+ match} frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      ));
+      replacedMessage = reactStringReplace(replacedMessage, /(https?:\/\/[^\s]*)+/g, (match, i) => (
+        <a href={match}>{match}</a>
+      ));
+      return(replacedMessage);
 }
 class App extends React.Component {
   constructor(props){
@@ -23,7 +36,7 @@ class App extends React.Component {
 
     this.socket.on('RECEIVE_MESSAGE', function(data, type){
         addMessage(data, type);
-    }); 
+    });
 
     const addMessage = (data, type) => {
       let result = data;
@@ -48,7 +61,6 @@ class App extends React.Component {
                 username: msg.username,
                 message: msg.message,
                 color: msg.color,
-                timestamp: msg.timestamp,
               }]
               return {
                 messages,
@@ -93,9 +105,9 @@ render (){
     return(
       <React.Fragment>
         <div class="content">
-            {this.state.messages.map(message =>
-                <p key="message"><font color={message.color}>{message.username}</font>
-              : { message.message }</p>
+            {this.state.messages.map(msg =>
+                <p key="message"><font color={msg.color}>{msg.username}</font>
+              : <ReplaceUrls message={msg.message}/></p>
             )}
         </div>
         <input id="msg_input" type="text" onKeyDown={this.handleKeyDown} placeholder="Enter your username..." />
