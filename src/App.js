@@ -81,6 +81,7 @@ class App extends React.Component {
     this.sendMessage = (message) => {
       if(this.state.username === null){
         this.setState({username: message});
+        $('#msg_input').removeAttr('placeholder');
       }
       else {
         this.socket.emit('SEND_MESSAGE', {
@@ -105,12 +106,12 @@ render (){
     return(
       <React.Fragment>
         <div class="content">
-            {this.state.messages.map(msg =>
-                <p key="message"><font color={msg.color}>{msg.username}</font>
+            {this.state.messages.map( (msg, i) =>
+                <p key="message-{i}"><font color={msg.color}>{msg.username}</font>
               : <ReplaceUrls message={msg.message}/></p>
             )}
         </div>
-        <input id="msg_input" type="text" onKeyDown={this.handleKeyDown} placeholder="Enter your username..." />
+        <input id="msg_input" type="text" onKeyDown={this.handleKeyDown} placeholder="Enter your username..." autocomplete="off"/>
         <Button onClick={() => this.sendMessage(document.getElementById('msg_input').value)}/>
       </React.Fragment>
 )}
