@@ -52,7 +52,6 @@ class ImageUpload extends React.Component {
 
     //asi que lo hago con jquery
     let formPost = new FormData(this.imgBBuploadRef.current);
-    console.log(formPost[0]);
     $.ajax({
       url: 'https://api.imgbb.com/1/upload?key=f78e74601edcdc526eb41972404beeaa',
       method: 'POST',
