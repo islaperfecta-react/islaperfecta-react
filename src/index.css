@@ -14,14 +14,47 @@ code {
 
 div { width:100%; margin-left:auto; margin-right:auto;}
         img {max-width: 400px;}
-        #content { background:#fff; margin-bottom: 3vw; overflow-anchor: none;/*overflow-y: scroll;
-                    */ }
-        #msg_input {  width: 96%; position: fixed; bottom: 0; left: 0; font-size: 3vw; }
-        #enviar{               position: fixed; bottom: 0vw;          font-size: 3.7vw; right:-3px; border: 2px black; }
+        #content {
+          background:#fff;
+          bottom: 3vw;
+        }
+        #msg_input {
+          width: 96vw;
+          position: fixed;
+          bottom: 0;
+          left: 0;
+          font-size: 3vw;
+        }
+        #enviar{
+          position: fixed;
+          bottom: 0vw;
+          font-size: 3.4vw;
+          right:-3px;
+          border: 2px black;
+         }
 
 #root {
     bottom: 4vw;
     position: fixed;
     overflow-y: scroll;
     height: calc(100vh - 4vw);
-} 
+}
+@font-face {
+font-family: 'Waltograph UI Bold';
+font-style: normal;
+font-weight: normal;
+src: local('Waltograph UI Bold'), url('waltographUI.woff') format('woff');
+}
+.disney{
+  font-family: 'Waltograph UI Bold';
+}
+.display-none{
+  display: none;
+}
+#upload-label{
+  position: fixed;
+  font-size: 3em;
+  bottom: 3.4vw;
+  right: 2.1vw;
+  float: right;
+}

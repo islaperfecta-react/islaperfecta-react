@@ -5,6 +5,7 @@ import logo from './logo.svg';
 import './App.css';
 const colors = [ 'red', 'green', 'blue', 'magenta', 'purple', 'plum', 'orange' ];
 const reactStringReplace = require('react-string-replace');
+const axios = require('axios').default;
 
 function Button(props){
     return(<label id="enviar" onClick={props.onClick}>⏩</label>);
@@ -14,12 +15,64 @@ function ReplaceUrls(props) {
       let replacedMessage = reactStringReplace(rawMessage, /(https?:\/\/[^\s]*\.(?:jpg|jpeg|gif|png|svg))/g, (match, i) => (
         <img src={match}/>));
       replacedMessage = reactStringReplace(replacedMessage, /http(?:s?):\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-\_]*)/g, (match, i) => (
-        <iframe width="260" height="161" src={"https://www.youtube.com/embed/" + match + "?loop=1&modestbranding=0&playlist="+ match} frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        <iframe width="260" height="161" src={"https://www.youtube.com/embed/" + match + "?loop=1&playlist="+ match} frameBorder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowFullScreen="1"></iframe>
       ));
       replacedMessage = reactStringReplace(replacedMessage, /(https?:\/\/[^\s]*)+/g, (match, i) => (
         <a href={match}>{match}</a>
       ));
       return(replacedMessage);
+}
+class ImageUpload extends React.Component {
+  constructor(props) {
+    super(props);
+    this.imgBBuploadRef = React.createRef();
+  }
+  attachURL(url){
+    let messageBox = $('#msg_input');
+    messageBox.val(messageBox.val() + ' ' + url);
+  }
+  upload(file){
+    /*
+    I tried to get it working with axios but i cant,
+      might be because of this: https://stackoverflow.com/questions/60651033/jquery-ajax-working-but-axios-giving-cors-error
+      here is the imgbb api info: https://api.imgbb.com/
+    */
+    // da el error "Network Error"
+
+    /*
+    let formPost = new FormData(this.imgBBuploadRef.current);
+    axios.post('https://api.imgbb.com/1/upload?key=f78e74601edcdc526eb41972404beeaa', {
+      data: formPost
+    })
+    .then( (response) => this.attachURL(response))
+    .catch(function(error) {
+      console.log(error);
+    })
+    */
+
+    //asi que lo hago con jquery
+    let formPost = new FormData(this.imgBBuploadRef.current);
+    console.log(formPost[0]);
+    $.ajax({
+      url: 'https://api.imgbb.com/1/upload?key=f78e74601edcdc526eb41972404beeaa',
+      method: 'POST',
+      data: formPost,
+      contentType: false, //not sure why but its needed
+      processData: false, //same
+      error: function(response){ console.log(response)},
+      success: (response) => this.attachURL(response.data.url)}
+      )
+  }
+  render(){
+    return(
+      <form ref={this.imgBBuploadRef} >
+      <label htmlFor="image-upload" id="upload-label" className="disney">
+        UPLOAD
+        <input name="image" type="file" id="image-upload" className="display-none" onChange={(event) => this.upload(event.target.value)}/>
+      </label>
+      </form>
+    )
+  }
 }
 class App extends React.Component {
   constructor(props){
@@ -105,14 +158,17 @@ class App extends React.Component {
 render (){
     return(
       <React.Fragment>
-        <div class="content">
+        <div className="content">
             {this.state.messages.map( (msg, i) =>
-                <p key="message-{i}"><font color={msg.color}>{msg.username}</font>
+                <p key={"message-" + i}><font color={msg.color}>{msg.username}</font>
               : <ReplaceUrls message={msg.message}/></p>
             )}
         </div>
-        <input id="msg_input" type="text" onKeyDown={this.handleKeyDown} placeholder="Enter your username..." autocomplete="off"/>
+        <ImageUpload />
+      <div className="input-wrapper">
+        <input id="msg_input" type="text" onKeyDown={this.handleKeyDown} placeholder="Enter your username..." autoComplete="off"/>
         <Button onClick={() => this.sendMessage(document.getElementById('msg_input').value)}/>
+      </div>
       </React.Fragment>
 )}
 
