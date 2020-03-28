@@ -53,8 +53,8 @@ src: local('Waltograph UI Bold'), url('waltographUI.woff') format('woff');
 }
 #upload-label{
   position: fixed;
-  font-size: 3em;
-  bottom: 3.4vw;
+  font-size: 3vw;
+  bottom: 4vw;
   right: 2.1vw;
   float: right;
 }
