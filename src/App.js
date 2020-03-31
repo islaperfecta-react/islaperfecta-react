@@ -176,7 +176,7 @@ class Ats extends React.Component {
       this.setState({ats: ats});
     }
     console.log('called')
-    this.showFavs = () =>{
+    this.showAts = () =>{
       if(this.state.atsOpen){
         $('#atsOpen').hide("slow")
         this.setState({atsOpen: false})
@@ -187,18 +187,30 @@ class Ats extends React.Component {
       this.setState({atsOpen: true})
       }
     }
+    this.replaceUrls = (msgToReplace) => {
+      let rawMessage = msgToReplace;
+      let replacedMessage = reactStringReplace(rawMessage, /(https?:\/\/[^\s]*\.(?:jpg|jpeg|gif|png|svg))/g, (match, i) => (
+        <img src={match}/>));
+      replacedMessage = reactStringReplace(replacedMessage, /http(?:s?):\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-\_]*)/g, (match, i) => (
+        <iframe width="260" height="161" src={"https://www.youtube.com/embed/" + match + "?loop=1&modestbranding=0&playlist="+ match} frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      ));
+      replacedMessage = reactStringReplace(replacedMessage, /(https?:\/\/[^\s]*)+/g, (match, i) => (
+        <a href={match}>{match}</a>
+      ));
+      return(replacedMessage);
+}
     }
   render(){
     return(
-      <div id="ats" >
-        <a className="disney" href="#" onClick={this.showFavs}>
-          @ats
+      <div id="ats">
+        <a className="disney" href="#" onClick={this.showAts}>
+          show @s
         </a>
         <div id="atsOpen">{this.state.ats!==null? this.state.ats.map( (at) =>
           <p>
-            {at.from}: {at.message}
+            {at.from}: {() => this.replaceUrls(at.message)}
         </p>
-      ) : 'nofavs '}</div>
+      ) : 'no@ts '}</div>
     </div>
     )
   }
@@ -258,6 +270,7 @@ class App extends React.Component {
     }
 
     this.sendMessage = (message) => {
+      document.getElementById('msg_input').value = '';
       if(this.state.username === null){
         this.setState({username: message});
         $('#msg_input').removeAttr('placeholder');
@@ -287,7 +300,6 @@ class App extends React.Component {
     this.handleKeyDown = (e) => {
       if(e.keyCode === 13){
         this.sendMessage(e.target.value);
-        $('#msg_input').val('');
       }
     }
 
