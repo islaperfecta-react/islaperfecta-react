@@ -190,9 +190,9 @@ class Ats extends React.Component {
     this.replaceUrls = (msgToReplace) => {
       let rawMessage = msgToReplace;
       let replacedMessage = reactStringReplace(rawMessage, /(https?:\/\/[^\s]*\.(?:jpg|jpeg|gif|png|svg))/g, (match, i) => (
-        <img src={match}/>));
+        <img src={match} width="160%"/>));
       replacedMessage = reactStringReplace(replacedMessage, /http(?:s?):\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-\_]*)/g, (match, i) => (
-        <iframe width="260" height="161" src={"https://www.youtube.com/embed/" + match + "?loop=1&modestbranding=0&playlist="+ match} frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        <iframe width="160%" src={"https://www.youtube.com/embed/" + match + "?loop=1&modestbranding=0&playlist="+ match} frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
       ));
       replacedMessage = reactStringReplace(replacedMessage, /(https?:\/\/[^\s]*)+/g, (match, i) => (
         <a href={match}>{match}</a>
@@ -208,7 +208,7 @@ class Ats extends React.Component {
         </a>
         <div id="atsOpen">{this.state.ats!==null? this.state.ats.map( (at) =>
           <p>
-            {at.from}: {() => this.replaceUrls(at.message)}
+            {at.from}: {this.replaceUrls(at.message)}
         </p>
       ) : 'no@ts '}</div>
     </div>
