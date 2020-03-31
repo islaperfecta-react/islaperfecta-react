@@ -373,6 +373,7 @@ class App extends React.Component {
       const messages = this.state.messages;
       if (type === 'message') {
         messages.push(result);
+        this.setState({messages: messages});
         scrollCheck(result, type)
       }
       if (type === 'history') {
