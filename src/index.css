@@ -87,6 +87,7 @@ src: local('Waltograph UI Bold'), url('waltographUI.woff') format('woff');
   position: fixed;
   top: 10px;
   left: 70vw;
+  width: 30vw;
 }
 #favs a{
   color: black;
@@ -105,6 +106,7 @@ src: local('Waltograph UI Bold'), url('waltographUI.woff') format('woff');
   position: fixed;
   top: 10px;
   left: 80vw;
+  width: 20vw;
 }
 #ats a{
   color: black;
@@ -115,4 +117,7 @@ src: local('Waltograph UI Bold'), url('waltographUI.woff') format('woff');
   height: 304px;
   overflow-y: scroll;
   display: none;
+}
+#atsOpen p{
+  width: 20%;
 }
