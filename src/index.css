@@ -140,6 +140,8 @@ a.disney {
   color: black;
 }
 .userlist marquee{
-  pointer-events: none;
-  z-index:-1;
+}
+.marquee{
+pointer-events: none;
+z-index:-1;
 }
