@@ -45,11 +45,23 @@ font-style: normal;
 font-weight: normal;
 src: local('Waltograph UI Bold'), url('waltographUI.woff') format('woff');
 }
+@font-face {
+font-family: 'disturbance';
+font-style: normal;
+font-weight: normal;
+src: url('BUBBLEGUMS.woff2') format('woff2');
+}
 .disney{
   font-family: 'Waltograph UI Bold';
 }
+a.disney {
+  z-index: 9999;
+}
 .display-none{
   display: none;
+}
+#messageBox{
+  overflow-x: hidden;
 }
 #upload-label{
   position: fixed;
@@ -120,4 +132,14 @@ src: local('Waltograph UI Bold'), url('waltographUI.woff') format('woff');
 }
 #atsOpen p{
   width: 20%;
+}
+.userlist{
+  position: fixed;
+  font-family: 'disturbance';
+  font-size: 5vh;
+  color: black;
+}
+.userlist marquee{
+  pointer-events: none;
+  z-index:-1;
 }

@@ -206,20 +206,53 @@ class Ats extends React.Component {
         <a className="disney" href="#" onClick={this.showAts}>
           show @s
         </a>
-        <div id="atsOpen">{this.state.ats!==null? this.state.ats.map( (at) =>
+        <div id="atsOpen">{this.state.ats!==null? (this.state.ats.map( (at) =>
           <p>
             {at.from}: {this.replaceUrls(at.message)}
         </p>
-      ) : 'no@ts '}</div>
+      )) : 'no@ts '}</div>
     </div>
+    )
+  }
+}
+class UserList extends React.Component {
+  constructor(props){
+    super(props)
+    this.state = {
+      userlist: [],
+      username: props.username
+    }
+    this.socket = props.socket
+    this.socket.on('NEW_USERLIST', (newList) => this.setState({userlist: newList}))
+    this.socket.on('GONE_USER', (user) => removeUser(user))
+    const removeUser = (elquesefue) =>{
+      let newList = this.state.userlist
+      newList.splice(this.state.userlist.indexOf(elquesefue),1)
+      this.setState({userlist: newList})
+    }
+  }
+  componentDidMount(){
+    this.socket.emit('NEW_USER', {username: this.state.username})
+  }
+  render(){
+    return(
+      <div id="userlist" className="userlist">
+        <marquee >
+        {this.state.userlist.map( (user) =>
+          <>{user + " "}</>
+        )}
+      </marquee>
+      </div>
     )
   }
 }
 class App extends React.Component {
   constructor(props){
+    let getCookieUsername = decodeURIComponent(document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1"))
+    getCookieUsername = getCookieUsername.length > 0 ? getCookieUsername : null
     super(props);
     this.state = {
-      username: null,
+      username: getCookieUsername,
       color: colors[ Math.floor( Math.random() * colors.length )],
       uid: null,
       messages: [],
@@ -272,15 +305,16 @@ class App extends React.Component {
     this.sendMessage = (message) => {
       document.getElementById('msg_input').value = '';
       if(this.state.username === null){
-        this.setState({username: message});
-        $('#msg_input').removeAttr('placeholder');
+        document.cookie = "username="+encodeURIComponent(message)+";max-age="+31536000+";expires="+(Date.UTC(Date.now()+31536000))
+        this.setState({username: message})
+        this.socket.emit('NEW_USERNAME', {username: this.state.username})
+        $('#msg_input').removeAttr('placeholder')
       }
       else {
         this.socket.emit('SEND_MESSAGE', {
             username: this.state.username,
             color: this.state.color,
             message: message,
-            timestamp: Date.now(),
             type: 'message',
         }, function(answer){});
         if(message.indexOf('@') !== -1){
@@ -346,27 +380,41 @@ class App extends React.Component {
               }
             })
           })
-          this.setState({historyLoaded:true});
+          this.setState({historyLoaded:true})
         }
       }
-      scrollCheck(result, type);
+      scrollCheck(result, type)
+
     }
+}
+componentDidMount(){
+  /* Codigo feo de jquery a reemplazar para que añada espacios al dropear images */
+  $('#msg_input').on('drop', function (ev){
+  //ev.preventDefault();
+  var data=ev.originalEvent.dataTransfer.getData("Text");
+  $('#msg_input').on('input', function(ev){
+      $('#msg_input').val($('#msg_input').val().replace(data, data+' '));
+      $('#msg_input').off('input');
+  })
+  })
 }
 
 render (){
     return(
       <React.Fragment>
+        <UserList socket={this.socket} username={this.state.username} onChangeUsername={this.userListCallback}/>
         {this.state.username? <Favs socket={this.socket} username={this.state.username} /> : null}
         {this.state.username? <Ats socket={this.socket} username={this.state.username} /> : null}
+
         <div className="content" id="messageBox">
             {this.state.messages.map( (msg, i) =>
-                  <p key={msg._id} id={msg._id} className={msg.faved_by.indexOf(this.state.username) !== -1? 'faved' : 'unfaved'} onClick={() => this.favMessage(msg)}>
+                  <p key={msg._id} id={msg._id} className={msg.faved_by.indexOf(this.state.username) !== -1 && msg.faved_by.length > 0? 'faved' : 'unfaved'} onClick={() => this.favMessage(msg)}>
                     <font color={msg.color}>{msg.username}</font>
                 : <ReplaceUrls onLoad={this.onLoad} counter={this.objCounter} message={msg.message} id={msg._id}/></p>
             )}
         </div>
       <div className="input-wrapper">
-        <input id="msg_input" type="text" onKeyDown={this.handleKeyDown} placeholder="Enter your username..." autoComplete="off"/>
+        <input id="msg_input" type="text" onKeyDown={this.handleKeyDown} placeholder={this.state.username === null? "Enter your username..." : "Tu username es " + this.state.username} autoComplete="off"/>
         <Button onClick={() => this.sendMessage(document.getElementById('msg_input').value)}/>
         <ImageUpload />
       </div>
