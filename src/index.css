@@ -86,7 +86,7 @@ src: local('Waltograph UI Bold'), url('waltographUI.woff') format('woff');
 #favs{
   position: fixed;
   top: 10px;
-  left: 70vw;
+  left: 60vw;
   width: 30vw;
 }
 #favs a{

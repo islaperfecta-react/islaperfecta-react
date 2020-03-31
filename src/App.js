@@ -142,18 +142,21 @@ class Favs extends React.Component {
       this.setState({favsOpen: true})
       }
     }
+    this.addImage = (favImg) =>{
+      $('#msg_input').val($('#msg_input').val() + ' ' + favImg + ' ')
+    }
     }
   componentDidMount(){
   }
   render(){
     return(
-      <div id="favs">
+      <div id="favs" >
         <a className="disney" href="#" onClick={this.showFavs}>
           FAVS
         </a>
         <div id="favOpen">{this.state.images!==null? this.state.images.map( (favImage) =>
           <p>
-            <img src={favImage} width="120px" height="76px" />
+            <img src={favImage} onClick={() => this.addImage(favImage)} width="120px" height="76px" />
         </p>
       ) : 'nofavs '}</div>
     </div>
@@ -187,9 +190,9 @@ class Ats extends React.Component {
     }
   render(){
     return(
-      <div id="ats">
+      <div id="ats" >
         <a className="disney" href="#" onClick={this.showFavs}>
-          @s
+          @ats
         </a>
         <div id="atsOpen">{this.state.ats!==null? this.state.ats.map( (at) =>
           <p>
