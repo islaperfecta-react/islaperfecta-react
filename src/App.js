@@ -310,10 +310,10 @@ class App extends React.Component {
 
     this.sendMessage = (message) => {
       document.getElementById('msg_input').value = '';
-      if(this.state.username === null){
+      if(this.state.username === null && message.length > 0){
         document.cookie = "username="+encodeURIComponent(message)+";max-age="+31536000+";expires="+(Date.UTC(Date.now()+31536000))
         this.setState({username: message})
-        this.socket.emit('NEW_USERNAME', {username: this.state.username})
+        this.socket.emit('NEW_USERNAME', {username: message})
         $('#msg_input').removeAttr('placeholder')
       }
       else {
