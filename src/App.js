@@ -262,8 +262,8 @@ class App extends React.Component {
 
     this.socket = io('localhost:8080');
 
-    this.socket.on('RECEIVE_MESSAGE', function(data, type){
-        addMessage(data, type);
+    this.socket.on('RECEIVE_MESSAGE', function(data, type, user){
+        addMessage(data, type, user);
     })
 
     this.objCounter = (msg_id, type, index) => {
@@ -290,13 +290,19 @@ class App extends React.Component {
           this.setState({images: images});
           var loadCheck = images.filter((i) => i.loaded === true);
           if (images.length === loadCheck.length) {
-            console.log('todos son cargados')
-            var i = 0;
-            var intvl = setInterval(function() {
-              i += 1;
-              scrollCheck(this.state, 'history');
-              if (i > 10) clearInterval(intvl);
-            }, 100)
+              var i = 0;
+              var ctx = this;
+              var intvl = setInterval(function() {
+                i += 1;
+                if (ctx.state.historyLoaded === false) scrollCheck(ctx.state, 'history');
+                if (ctx.state.historyLoaded === true) scrollCheck(ctx.state, 'more_history');
+                if (i > 5) {
+                  clearInterval(intvl);
+                  ctx.setState({historyLoaded:true});
+                  $('#loader').hide(0);
+                  $('#loadCover').fadeOut(500);
+                }
+              }, 100)
           }
         }
       })
@@ -337,57 +343,64 @@ class App extends React.Component {
       }
     }
 
-    const scrollCheck = (result, type) => {
-      // Comprobar si el usuario se desplaza hasta la parte abajo de la página y desplazarse para revelar el siguiente mensaje si está
+    this.handleScroll = (e) => {
+      var scrollY = e.currentTarget.scrollTop;
       var root = document.getElementById('root');
-      var scrollBottom = root.scrollHeight - root.clientHeight;
-      if ((root.clientHeight + root.scrollTop) >= root.scrollHeight - 100 || type === 'history' || result.username === this.state.username ) {
-        root.scrollTop = scrollBottom;
+      if (scrollY === 0) {
+        $('#loader').show(0);
+        var firstMsg = this.state.messages[0];
+        this.socket.emit('GET_MORE_HISTORY', {username: this.state.username, firstMsgID: firstMsg._id});
       }
     }
 
-    const addMessage = (data, type) => {
-      let result = data;
-      if (type == 'message') {
-        this.setState(state => {
-          const messages = [...state.messages,{
-            username: result.username,
-            message: result.message,
-            color: result.color,
-            timestamp: result.timestamp,
-            faved_by: result.faved_by,
-            _id: result._id
-          } ]
-          return {
-            messages,
-          }
-        })
+    const scrollCheck = (result, type, topEl) => {
+      var root = document.getElementById('root');
+      var scrollBottom = root.scrollHeight - root.clientHeight;
+      if (type === 'more_history' && topEl) {
+        var topElNewPos = topEl.getBoundingClientRect().y;
+        root.scrollTop = topElNewPos - 20;
+        $('#loader').hide(0);
       }
-      if (type == 'history') {
-        if (this.state.historyLoaded === false) {
-          result.map(msg => {
-            this.setState(state => {
-              const messages = [{
-                username: msg.username,
-                message: msg.message,
-                color: msg.color,
-                timestamp: msg.timestamp,
-                faved_by: msg.faved_by,
-                _id: msg._id
-              },...state.messages ]
-              return {
-                messages,
-              }
-            })
-          })
-          this.setState({historyLoaded:true})
+      if (type === 'message' || type === 'history' ) {
+        if ((root.clientHeight + root.scrollTop) >= root.scrollHeight - 100 || type === 'history' || result.username === this.state.username ) {
+          root.scrollTop = scrollBottom;
         }
       }
-      scrollCheck(result, type)
+    }
+
+    const addMessage = (data, type, user) => {
+      let result = data;
+      const messages = this.state.messages;
+      if (type === 'message') {
+        messages.push(result);
+        scrollCheck(result, type)
+      }
+      if (type === 'history') {
+        if (this.state.historyLoaded === false) {
+          result.map(msg => {
+            messages.unshift(msg);
+            this.setState({messages: messages});
+          })
+          scrollCheck(result, type)
+        }
+      }
+      if (type === 'more_history') {
+        if (this.state.username === user) {
+          var firstEl = document.getElementById('messageBox').firstChild;
+          //console.log(firstEl)
+          result.map(msg => {
+            messages.unshift(msg);
+            this.setState({messages: messages});
+          })
+          scrollCheck(result, type, firstEl)
+        }
+      }
 
     }
 }
-componentDidMount(){
+componentDidMount() {
+  var root = document.getElementById('root');
+  root.addEventListener('scroll', this.handleScroll);
   /* Codigo feo de jquery a reemplazar para que añada espacios al dropear images */
   $('#msg_input').on('drop', function (ev){
   //ev.preventDefault();
@@ -405,6 +418,12 @@ render (){
         <UserList socket={this.socket} username={this.state.username} onChangeUsername={this.userListCallback}/>
         {this.state.username? <Favs socket={this.socket} username={this.state.username} /> : null}
         {this.state.username? <Ats socket={this.socket} username={this.state.username} /> : null}
+
+        <div id="loadCover"></div>
+        <div id="loader">
+          <img src="https://i.ibb.co/HDkTMS4/Impolite-Snappy-Bumblebee-small-2b.gif" />
+          <span>Cargando historial...</span>
+        </div>
 
         <div className="content" id="messageBox">
             {this.state.messages.map( (msg, i) =>
