@@ -179,7 +179,7 @@ class Ats extends React.Component {
         this.setState({atsOpen: false})
       }
       else{
-      this.socket.emit('GET_ATS', props.username)
+      this.socket.emit('GET_ATS', {username: props.username})
       $('#atsOpen').show("slow")
       this.setState({atsOpen: true})
       }
