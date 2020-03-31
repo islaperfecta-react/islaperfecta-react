@@ -31,7 +31,26 @@ div { width:100%; margin-left:auto; margin-right:auto;}
           font-size: 3.4vw;
           left: 91vw;
           border: 2px black;
-         }
+        }
+        #loader {
+          position: fixed;
+          background-color: white;
+          z-index: 0;
+        }
+        #loader > img {
+          width: 37px;
+        }
+        #loader > span {
+          position: fixed;
+          margin: 10px 0 0 6px;
+        }
+        #loadCover {
+          position: fixed;
+          width: 100vw;
+          height: 100vh;
+          background-color: white;
+          z-index: 0;
+        }
 
 #root {
     bottom: 4vw;
@@ -100,6 +119,7 @@ a.disney {
   top: 10px;
   left: 60vw;
   width: 30vw;
+  z-index: 1;
 }
 #favs a{
   color: black;
@@ -119,6 +139,7 @@ a.disney {
   top: 10px;
   left: 80vw;
   width: 20vw;
+  z-index: 1;
 }
 #ats a{
   color: black;
@@ -138,10 +159,9 @@ a.disney {
   font-family: 'disturbance';
   font-size: 5vh;
   color: black;
+  z-index: 1;
 }
 .userlist marquee{
-}
-.marquee{
-pointer-events: none;
-z-index:-1;
+  pointer-events: none;
+  z-index:-1;
 }
