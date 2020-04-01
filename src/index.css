@@ -44,12 +44,12 @@ div { width:100%; margin-left:auto; margin-right:auto;}
           position: fixed;
           margin: 10px 0 0 6px;
         }
-        #loadCover {
+        #loadCover {/* para conexiones lentas mejor que se vea como va cargando
           position: fixed;
           width: 100vw;
           height: 100vh;
           background-color: white;
-          z-index: 0;
+          z-index: 0;*/
         }
 
 #root {
