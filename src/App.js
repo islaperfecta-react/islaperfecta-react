@@ -206,11 +206,11 @@ class Ats extends React.Component {
         <a className="disney" href="#" onClick={this.showAts}>
           show @s
         </a>
-        <div id="atsOpen">{this.state.ats!==null? (this.state.ats.map( (at) =>
+        <div id="atsOpen">{this.state.ats.length > 0? (this.state.ats.map( (at) =>
           <p>
             {at.from}: {this.replaceUrls(at.message)}
         </p>
-      )) : 'no@ts '}</div>
+      )) : 'no @ts '}</div>
     </div>
     )
   }
