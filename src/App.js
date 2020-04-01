@@ -259,7 +259,7 @@ class App extends React.Component {
       historyLoaded: false,
     }
 
-    this.socket = io('192.168.1.4:8080');
+    this.socket = io('localhost:8080');
     /* reconnect copiado directamente de los docs de sockets.io */
     this.socket.on('disconnect', (reason) => {
       if (reason === 'io server disconnect') {
