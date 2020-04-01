@@ -271,7 +271,7 @@ class App extends React.Component {
       // else the socket will automatically try to reconnect
     })
 
-    
+
     this.socket.on('RECEIVE_MESSAGE', function(data, type, user){
         addMessage(data, type, user);
     })
@@ -324,7 +324,7 @@ class App extends React.Component {
       let nameCommand = message.indexOf('/name ') === 0
       if(nameCommand === true) message = message.substr(6)
       if(/^\s*$/g.test(message) === true) message = null //que no sean solo espacios
-      /* */
+      
       if((this.state.username === null || nameCommand === true) && message.length > 0){
         document.cookie = "username="+encodeURIComponent(message)+";max-age="+31536000+";expires="+(Date.UTC(Date.now()+31536000))
         this.setState({username: message})
