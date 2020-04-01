@@ -262,6 +262,16 @@ class App extends React.Component {
 
     this.socket = io('localhost:8080');
 
+    /* reconnect copiado directamente de los docs de sockets.io */
+    this.socket.on('disconnect', (reason) => {
+      if (reason === 'io server disconnect') {
+        // the disconnection was initiated by the server, you need to reconnect manually
+        this.socket.connect();
+      }
+      // else the socket will automatically try to reconnect
+    })
+
+    
     this.socket.on('RECEIVE_MESSAGE', function(data, type, user){
         addMessage(data, type, user);
     })
