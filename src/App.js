@@ -232,7 +232,6 @@ class UserList extends React.Component {
     }
   }
   componentDidMount(){
-    this.socket.emit('NEW_USER', {username: this.state.username})
   }
   render(){
     return(
@@ -260,8 +259,7 @@ class App extends React.Component {
       historyLoaded: false,
     }
 
-    this.socket = io('localhost:8080');
-
+    this.socket = io('192.168.1.4:8080');
     /* reconnect copiado directamente de los docs de sockets.io */
     this.socket.on('disconnect', (reason) => {
       if (reason === 'io server disconnect') {
@@ -269,8 +267,14 @@ class App extends React.Component {
         this.socket.connect();
       }
       // else the socket will automatically try to reconnect
+    });
+    this.socket.on('connect', () => {
+      this.socket.emit('NEW_USER', {username: this.state.username})
+      if(this.state.messages.length > 0){ //comes back from idle (mobile)
+        this.socket.emit('GET_NEW_MESSAGES', {lastMsgId: this.state.messages[this.state.messages.length -1]._id})
+        console.log('sent get_new_messages')
+      }
     })
-
 
     this.socket.on('RECEIVE_MESSAGE', function(data, type, user){
         addMessage(data, type, user);
@@ -324,7 +328,7 @@ class App extends React.Component {
       let nameCommand = message.indexOf('/name ') === 0
       if(nameCommand === true) message = message.substr(6)
       if(/^\s*$/g.test(message) === true) message = null //que no sean solo espacios
-      
+      /* */
       if((this.state.username === null || nameCommand === true) && message.length > 0){
         document.cookie = "username="+encodeURIComponent(message)+";max-age="+31536000+";expires="+(Date.UTC(Date.now()+31536000))
         this.setState({username: message})
@@ -410,6 +414,14 @@ class App extends React.Component {
           })
           scrollCheck(result, type, firstEl)
         }
+      }
+      if (type === 'get_new_messages') { //añadido esto para cuando un mobile vuelve de idle, cojer los nuevos mensajes
+        result.map(msg => {
+          messages.push(msg);
+          this.setState({messages: messages})
+        })
+
+        scrollCheck(result, 'message')
       }
 
     }
