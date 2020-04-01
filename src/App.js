@@ -271,8 +271,7 @@ class App extends React.Component {
     this.socket.on('connect', () => {
       this.socket.emit('NEW_USER', {username: this.state.username})
       if(this.state.messages.length > 0){ //comes back from idle (mobile)
-        this.socket.emit('GET_NEW_MESSAGES', {lastMsgId: this.state.messages[this.state.messages.length -1]._id})
-        console.log('sent get_new_messages')
+        this.socket.emit('GET_NEW_MESSAGES', {lastMsgID: this.state.messages[this.state.messages.length -1]._id})
       }
     })
 
@@ -400,6 +399,7 @@ class App extends React.Component {
           result.map(msg => {
             messages.unshift(msg);
             this.setState({messages: messages});
+            console.log(msg._id);
           })
           scrollCheck(result, type)
         }
@@ -418,9 +418,8 @@ class App extends React.Component {
       if (type === 'get_new_messages') { //añadido esto para cuando un mobile vuelve de idle, cojer los nuevos mensajes
         result.map(msg => {
           messages.push(msg);
-          this.setState({messages: messages})
         })
-
+        this.setState({messages: messages})
         scrollCheck(result, 'message')
       }
 
