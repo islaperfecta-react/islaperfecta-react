@@ -310,7 +310,9 @@ class App extends React.Component {
 
     this.sendMessage = (message) => {
       document.getElementById('msg_input').value = '';
-      if(this.state.username === null && message.length > 0){
+      let nameCommand = message.indexOf('/name ') === 0
+      if(nameCommand === true) message = message.substr(6)
+      if((this.state.username === null || nameCommand === true) && message.length > 0){
         document.cookie = "username="+encodeURIComponent(message)+";max-age="+31536000+";expires="+(Date.UTC(Date.now()+31536000))
         this.setState({username: message})
         this.socket.emit('NEW_USERNAME', {username: message})
