@@ -313,7 +313,7 @@ class App extends React.Component {
       /* /name comand y detectar si solo son espacios (causaba bug) */
       let nameCommand = message.indexOf('/name ') === 0
       if(nameCommand === true) message = message.substr(6)
-      if(message.match(/^\s*$/g) === true) message = null //que no sean solo espacios
+      if(message.test(/^\s*$/g) === true) message = null //que no sean solo espacios
       /* */
       if((this.state.username === null || nameCommand === true) && message.length > 0){
         document.cookie = "username="+encodeURIComponent(message)+";max-age="+31536000+";expires="+(Date.UTC(Date.now()+31536000))
