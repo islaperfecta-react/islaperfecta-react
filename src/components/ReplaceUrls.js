@@ -12,7 +12,7 @@ function ReplaceUrls(props) {
               ));
             }
           };
-      replace('img', /(https?:\/\/[^\s]*\.(?:jpg|jpeg|gif|png|svg))/g, (match, index, offset) =>
+      replace('img', /(https?:\/\/[^\s]*\.(?:jpg|jpeg|gif|png|svg|JPG|JPEG|GIF|PNG|SVG))/g, (match, index, offset) =>
           <img className={index} onLoad={props.onLoad(props.id, mat.index)} src={match}/>
       );
       replace('iframe', /http(?:s?):\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-\_]*)/g, (match, index, offset) =>
