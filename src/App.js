@@ -12,6 +12,7 @@ import Favs from "./components/Favs.js";
 import Ats from "./components/Ats.js";
 import UserList from "./components/UserList.js";
 import colors from "./components/colors.js";
+import VideoChat from "./components/VideoChat.js"
 
 class App extends React.Component {
 
@@ -28,7 +29,7 @@ class App extends React.Component {
       historyLoaded: false,
     }
 
-    this.socket = io('localhost:8080');
+    this.socket = io('192.168.1.4:8080');
     this.objCounter = this.objCounter.bind(this);
     this.onLoad = this.onLoad.bind(this);
     this.scrollCheck = this.scrollCheck.bind(this);
@@ -119,7 +120,6 @@ class App extends React.Component {
         result.map(msg => {
           messages.unshift(msg);
           this.setState({messages: messages});
-          console.log(msg._id);
         })
         this.scrollCheck(result, type)
       }
@@ -242,6 +242,7 @@ class App extends React.Component {
             <input id="msg_input" type="text" onKeyDown={this.handleKeyDown} placeholder={this.state.username === null? "Enter your username..." : "Tu username es " + this.state.username} autoComplete="off"/>
             <Button onClick={() => this.sendMessage(document.getElementById('msg_input').value)}/>
             <ImageUpload />
+            <VideoChat socket={this.socket} />
           </div>
         </React.Fragment>
   )}
