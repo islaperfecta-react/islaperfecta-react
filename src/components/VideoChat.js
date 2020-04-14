@@ -39,6 +39,7 @@ class VideoChat extends React.Component {
     newVideo.setAttribute('autoplay', true)
     newVideo.setAttribute('playsinline', true)
     newVideo.setAttribute('muted', true)
+    newVideo.muted = true
     littleCamera.appendChild(newVideo)
     try{
       newVideo.srcObject = stream
@@ -81,6 +82,7 @@ class VideoChat extends React.Component {
     newVideo.setAttribute('autoplay', true)
     newVideo.setAttribute('playsinline', true)
     newVideo.setAttribute('muted', true)
+    newVideo.muted = true
     littleCamera.appendChild(newVideo)
     peer.on('stream', (stream) => {
       try{
@@ -109,6 +111,7 @@ class VideoChat extends React.Component {
     newVideo.setAttribute('autoplay', true)
     newVideo.setAttribute('playsinline', true)
     newVideo.setAttribute('muted', true)
+    newVideo.muted = true
     littleCamera.appendChild(newVideo)
     peer.on('stream', (stream) => {
       try{
