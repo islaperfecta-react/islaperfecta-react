@@ -29,7 +29,7 @@ class App extends React.Component {
       historyLoaded: false,
     }
 
-    this.socket = io('192.168.1.4:8080');
+    this.socket = io('wss://islaperfecta-server.herokuapp.com');
     this.objCounter = this.objCounter.bind(this);
     this.onLoad = this.onLoad.bind(this);
     this.scrollCheck = this.scrollCheck.bind(this);
