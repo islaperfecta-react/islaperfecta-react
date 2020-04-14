@@ -242,7 +242,7 @@ class App extends React.Component {
             <input id="msg_input" type="text" onKeyDown={this.handleKeyDown} placeholder={this.state.username === null? "Enter your username..." : "Tu username es " + this.state.username} autoComplete="off"/>
             <Button onClick={() => this.sendMessage(document.getElementById('msg_input').value)}/>
             <ImageUpload />
-            <VideoChat socket={this.socket} />
+            {/*<VideoChat socket={this.socket} />*/}
           </div>
         </React.Fragment>
   )}
