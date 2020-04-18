@@ -12,7 +12,7 @@ import Favs from "./components/Favs.js";
 import Ats from "./components/Ats.js";
 import UserList from "./components/UserList.js";
 import colors from "./components/colors.js";
-import VideoChat from "./components/VideoChat.js"
+import VideoChat from "./components/VideoChat.js" //webRTC videochat
 
 class App extends React.Component {
 
